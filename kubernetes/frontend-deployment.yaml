@@ -1,0 +1,44 @@
+apiVersion: apps/v1          # API-Version für Deployments
+kind: Deployment             # Kubernetes-Ressourcentyp
+
+metadata:
+  name: frontend             # Name des Deployments
+
+spec:
+  replicas: 1                # Anzahl der Pods, die laufen sollen
+
+  selector:                  # Gibt an, welche Pods zu diesem Deployment gehören
+    matchLabels:
+      app: frontend          # Der Deployment-Controller verwaltet alle Pods mit diesem Label
+
+  template:                  # Vorlage für die zu erstellenden Pods
+    metadata:
+      labels:
+        app: frontend        # Die erstellten Pods erhalten dieses Label
+
+    spec:
+      containers:
+      - name: frontend       # Name des Containers innerhalb des Pods
+        image: todo-frontend/frontend:1.0.0  # Docker-Image, das für den Container verwendet wird
+        ports:
+        - containerPort: 80  # Der Container lauscht intern auf Port 80
+
+---
+
+apiVersion: v1
+kind: Service                # Kubernetes-Ressourcentyp
+
+metadata:
+  name: frontend             # Name des Services
+
+spec:
+  type: NodePort             # Service-Typ: erlaubt Zugriff von außen über den Node-Port
+
+  selector:
+    app: frontend            # Dieser Service leitet Traffic nur an Pods mit diesem Label weiter
+
+  ports:
+  - port: 80                 # Der Service wird innerhalb des Clusters auf Port 80 angesprochen
+    targetPort: 80           # Weiterleitung an den Container-Port (also den Nginx-Port)
+    nodePort: 30080          # Aufruf von außen möglich über Node-IP:30080 (http://localhost:30080)
+

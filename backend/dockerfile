@@ -1,0 +1,14 @@
+# OpenJDK-17-Images als Basis
+FROM openjdk:17-jdk-slim
+
+# Setzt das Arbeitsverzeichnis im Container auf /app
+WORKDIR /app
+
+# Kopiert die kompilierte .jar-Datei in den Container und benennt sie in app.jar um
+COPY target/*.jar app.jar
+
+# Startbefehl für den Container, der die JAR-Datei ausführt
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# Der Container lauscht auf Port 8080 
+EXPOSE 8080

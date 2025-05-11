@@ -1,0 +1,8 @@
+# Nginx-Image mit Alpine Linux als Basis
+FROM nginx:alpine
+
+# Kopiere alle Dateien aus dem aktuellen Verzeichnis in das Verzeichnis von Nginx, das für die Bereitstellung der statischen Inhalte verantwortlich ist
+COPY ./ /usr/share/nginx/html
+
+# Exponiere Port 80, auf dem der Nginx-Server lauscht.
+EXPOSE 80

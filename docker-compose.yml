@@ -1,0 +1,16 @@
+version: '3.8'  # Version des Docker Compose-Formats 
+
+services:  # Definiert die einzelnen Container-Dienste, die gestartet werden sollen
+
+  backend:  
+    build: ./backend  # Das Backend-Image wird aus dem Verzeichnis "./backend" gebaut (Dockerfile muss dort liegen)
+    ports:
+      - "8085:8080"  # Der Container-Port 8080 wird auf Port 8085 des Hosts gemappt
+
+  frontend:  
+    build: ./frontend  # Das Frontend-Image wird aus dem Verzeichnis "./frontend" gebaut 
+    ports:
+      - "8086:80"  # Der Container-Port 80 wird auf Port 8086 des Hosts gemappt
+    depends_on:
+      - backend  # Dieser Dienst wird erst gestartet, nachdem der "backend"-Dienst gestartet wurde
+                

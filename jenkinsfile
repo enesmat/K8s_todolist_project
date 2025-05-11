@@ -1,0 +1,61 @@
+pipeline {
+    // Der Build kann auf jedem verfügbaren Agent ausgeführt werden
+    agent any
+
+    environment {
+        // Setze Umgebungsvariablen für die Backend- und Frontend-Images sowie die Tag-Version
+        IMAGE_BACKEND = 'todo-backend'
+        IMAGE_FRONTEND = 'todo-frontend'
+        IMAGE_TAG = '1.0.0'
+    }
+
+    options {
+        // Beendet den Build automatisch nach 30 Minuten, falls er hängt oder längert dauert
+        timeout(time: 30, unit: 'MINUTES')
+
+        // Verhindert, dass mehrere Builds dieses Jobs gleichzeitig laufen
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Clean Workspace') {
+            steps {
+                // Löscht alle Dateien aus dem Jenkins-Arbeitsbereich, um mit einer sauberen Umgebung zu starten
+                cleanWs()
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                // Holt den aktuellen Code aus dem Git-Repository (z. B. GitHub), das mit dem Job verknüpft ist
+                checkout scm
+            }
+        }
+
+        stage('Build & Deploy') {
+            steps {
+                // Falls das Skript nicht ausführbar ist, wird es ausführbar gemacht
+                sh 'chmod +x ./deploy.sh'
+
+                // Führt das Deployment-Skript aus
+                sh './deploy.sh'
+            }
+        }
+    }
+
+    post {
+        // Wird ausgeführt, wenn der Build erfolgreich abgeschlossen wurde
+        success {
+            echo 'Deployment erfolgreich!'
+        }
+
+        // Wird ausgeführt, wenn der Build fehlschlägt
+        failure {
+            echo 'Deployment fehlgeschlagen.'
+        }
+
+        // Wird immer ausgeführt, egal ob erfolgreich oder fehlgeschlagen
+        always {
+        }
+    }
+}

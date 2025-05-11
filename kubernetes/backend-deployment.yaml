@@ -1,0 +1,40 @@
+apiVersion: apps/v1         # Verwendete API-Version für Deployments
+kind: Deployment            # Ressourcen-Typ
+
+metadata:
+  name: backend             # Name des Deployments
+
+spec:
+  replicas: 1               # Es soll ein Pod der Anwendung laufen
+
+  selector:
+    matchLabels:
+      app: backend          # Wählt Pods mit diesem Label aus
+
+  template:                 # Definition, wie die Pods aussehen sollen
+    metadata:
+      labels:
+        app: backend        # Gibt dem Pod das Label 'app=backend'
+
+    spec:
+      containers:
+      - name: backend       # Name des Containers innerhalb des Pods
+        image: todo-backend/backend:1.0.0  # Docker-Image 
+        ports:
+        - containerPort: 8080  # Öffnet Port 8080 innerhalb des Containers
+
+---
+apiVersion: v1
+kind: Service              # Ressourcen-Typ
+
+metadata:
+  name: backend            # Name des Service
+
+spec:
+  selector:
+    app: backend           # Verbindet den Service mit den Pods, die das Label app=backend haben
+
+  ports:
+  - port: 8080             # Port, auf dem der Service innerhalb des Clusters erreichbar ist
+    targetPort: 8080       # Port im Container, zu dem der Traffic weitergeleitet wird
+
