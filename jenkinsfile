@@ -27,8 +27,8 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                // Holt den aktuellen Code aus dem Git-Repository (z. B. GitHub), das mit dem Job verknüpft ist
-                checkout scm
+                // Holt den aktuellen Code aus dem Git-Repository, das mit dem Job verknüpft ist
+                git branch: 'main', url: 'https://github.com/enesmat/K8s_todolist_project'
             }
         }
 
@@ -56,6 +56,7 @@ pipeline {
 
         // Wird immer ausgeführt, egal ob erfolgreich oder fehlgeschlagen
         always {
+            echo 'Deployment ausgeführt'
         }
     }
 }

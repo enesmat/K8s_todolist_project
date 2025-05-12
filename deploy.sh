@@ -14,6 +14,16 @@ if ! command -v kubectl &> /dev/null; then
   exit 1
 fi
 
+echo "Baue Backend mit Maven..."
+
+# Wechselt ins Unterverzeichnis "backend", wo sich die pom.xml und der Quellcode befinden
+cd backend
+
+# Führt den Maven-Befehl aus, um das Projekt zu bauen und überspringt alle Unit-Tests
+mvn clean package -DskipTests
+
+# Wechselt zurück ins ursprüngliche Verzeichnis (z. B. zum Root-Projektordner mit docker-compose.yml)
+cd ..
 docker compose build # Baut die Docker-Images basierend auf der docker-compose.yml und Verwendet die Dockerfiles in ./backend und ./frontend
 docker compose down # Stoppt und entfernt laufende Container aus vorherigen Durchläufen
 docker compose up -d # Startet die Container im Hintergrund ("detached mode")

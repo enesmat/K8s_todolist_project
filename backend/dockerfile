@@ -1,14 +1,28 @@
-# OpenJDK-17-Images als Basis
-FROM openjdk:17-jdk-slim
+#Buildphase
+# Maven-Image mit Java 21 um das Projekt zu bauen
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
-# Setzt das Arbeitsverzeichnis im Container auf /app
+# Setze das Arbeitsverzeichnis im Container auf /app
 WORKDIR /app
 
-# Kopiert die kompilierte .jar-Datei in den Container und benennt sie in app.jar um
-COPY target/*.jar app.jar
+# Kopiert den gesamten Backend-Code ins Image
+COPY . .
 
-# Startbefehl für den Container, der die JAR-Datei ausführt
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Führe den Maven-Build aus und überspringe Tests 
+RUN mvn clean package -DskipTests
 
-# Der Container lauscht auf Port 8080 
+#Laufzeitphase
+# Verwende ein schlankes Java 21 JDK-Image für die Ausführung
+FROM eclipse-temurin:21-jdk
+
+# Setze das Arbeitsverzeichnis im Container auf /app
+WORKDIR /app
+
+# Kopiert die gebaute JAR-Datei aus der Build-Phase in das neue Image
+COPY --from=build /app/target/*.jar app.jar
+
+# Öffne Port 8080
 EXPOSE 8080
+
+# Startet die Anwendung beim Containerstart
+ENTRYPOINT ["java", "-jar", "app.jar"]
